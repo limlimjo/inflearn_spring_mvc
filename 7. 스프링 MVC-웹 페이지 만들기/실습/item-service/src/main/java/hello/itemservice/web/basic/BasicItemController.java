@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -88,12 +89,20 @@ public class BasicItemController {
     // But, 유의할 점!!!
     // redirect에서 +item.getId()처럼 URL에 변수를 더해서 사용하는 것은 URL 인코딩이 안되기 때문에 위험함
     // 뒤에서 정리할 RedirectAttributes를 사용하자!
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV5(Item item) {
         itemRepository.save(item);
         return "redirect:/basic/items/" + item.getId();
     }
 
+    // 상품 등록 처리 - RedirectAttributes
+    @PostMapping("/add")
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/basic/items/{itemId}";
+    }
 
     // 상품 수정 폼
     @GetMapping("/{itemId}/edit")
