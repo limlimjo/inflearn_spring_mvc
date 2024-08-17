@@ -77,12 +77,23 @@ public class BasicItemController {
     }
 
     // 상품 등록 처리 - @ModelAttribute 이용 (@ModelAttribute 전체 생략)
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV4(Item item, Model model) {
         itemRepository.save(item);
         //model.addAttribute("item", item); //자동 추가, 생략 가능
         return "basic/item";
     }
+
+    // 상품 등록 처리 - PRG - Post/Redirect/Get <- 실무에서 많이 쓰이는 방법
+    // But, 유의할 점!!!
+    // redirect에서 +item.getId()처럼 URL에 변수를 더해서 사용하는 것은 URL 인코딩이 안되기 때문에 위험함
+    // 뒤에서 정리할 RedirectAttributes를 사용하자!
+    @PostMapping("/add")
+    public String addItemV5(Item item) {
+        itemRepository.save(item);
+        return "redirect:/basic/items/" + item.getId();
+    }
+
 
     // 상품 수정 폼
     @GetMapping("/{itemId}/edit")
